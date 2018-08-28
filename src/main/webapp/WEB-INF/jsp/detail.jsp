@@ -42,7 +42,7 @@
                     <span id="killPhoneMessage" class="glyphicon"></span>
                     <button type="button" id="killPhoneBtn" class="btn btn-success">
                         <span class="glyphicon glyphicon-phone"></span>
-                        提交
+                        Submit
                     </button>
                 </div>
             </div>
