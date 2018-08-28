@@ -40,8 +40,17 @@
             </table>
         </div>
     </div>
+    <div>
+        <ul class="pager">
+            <li class="previous">
+                <a href="/seckill/${pageNumber-1}/list">Previous</a>
+            </li>
+            <li class="next">
+                <a href="/seckill/${pageNumber+1}/list">Next</a>
+            </li>
+        </ul>
+    </div>
 </div>
-
 </body>
 
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入，bootstrap.min.js依赖jquery.min.js -->

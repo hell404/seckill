@@ -42,7 +42,7 @@
                     <span id="killPhoneMessage" class="glyphicon"></span>
                     <button type="button" id="killPhoneBtn" class="btn btn-success">
                         <span class="glyphicon glyphicon-phone"></span>
-                        提交
+                        Submit
                     </button>
                 </div>
             </div>
@@ -57,7 +57,7 @@
 <!-- jquery cookie操作插件 -->
 <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <!-- jquery countDown倒计时插件 -->
-<script src="https://cdn.bootcss.com/jquery-countdown/2.0.1/jquery.countdown.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery.countdown/2.1.0/jquery.countdown.min.js"></script>
 
 <!--开始编写交互逻辑-->
 <script src="/resources/script/seckill.js" type="text/javascript"></script>

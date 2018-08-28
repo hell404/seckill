@@ -102,6 +102,30 @@ public class SeckillServiceImpl implements SeckillService {
         }
     }
 
+    @Override
+    public List<Seckill> getSeckillListByPage(int pageIdx) {
+        return seckillDao.queryByPage(pageIdx * 4,4);
+    }
+
+    @Override
+    public int getSeckillPageNumber(int pageNumber) {
+        int pageIdx = 0;
+        int pageCount = seckillDao.queryCount();
+        int isAliquot = pageCount % 4;
+        if(isAliquot == 0){
+            pageIdx = pageCount/4 - 1;
+        }else{
+            pageIdx = pageCount/4;
+        }
+        if(pageNumber <= 0){
+            return 0;
+        }else if (pageNumber >= pageIdx){
+            return pageIdx;
+        }else{
+            return pageNumber;
+        }
+    }
+
    /* public static void main(String[] args) {
         SeckillServiceImpl seckillService = new SeckillServiceImpl();
         System.out.println(seckillService.getMD5(1000));;

@@ -31,4 +31,16 @@
         ORDER BY create_time DESC
         limit #{offset},#{limit}
     </select>
+
+    <select id="queryByPage" resultType="Seckill">
+        SELECT seckill_id,name,number,start_time,end_time,create_time
+        FROM seckill
+        ORDER BY create_time DESC
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="queryCount" resultType="integer">
+        SELECT COUNT(seckill_id)
+        FROM seckill
+    </select>
 </mapper>

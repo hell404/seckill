@@ -1,5 +1,6 @@
 package org.seckill.web;
 
+import org.seckill.dao.SeckillDao;
 import org.seckill.dto.Exposer;
 import org.seckill.dto.SeckillExecution;
 import org.seckill.dto.SeckillResult;
@@ -30,6 +31,7 @@ public class SeckillController {
         //获取列表页
         List<Seckill> list = seckillService.getSeckillList();
         model.addAttribute("list",list);
+        model.addAttribute("pageNumber",0);
         return "list";
     }
 
@@ -49,7 +51,7 @@ public class SeckillController {
     @RequestMapping(value = "/{seckillId}/exposer",method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public SeckillResult<Exposer> exposer(Long seckillId){
+    public SeckillResult<Exposer> exposer(@PathVariable("seckillId") Long seckillId){
         SeckillResult<Exposer> result;
         try{
             Exposer exposer = seckillService.exportSeckillUrl(seckillId);
@@ -76,19 +78,30 @@ public class SeckillController {
              return new SeckillResult<SeckillExecution>(true,execution);
         }catch (RepeatKillException e){
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.REPEAT_KILL);
-            return new SeckillResult<SeckillExecution>(false,execution);
+            return new SeckillResult<SeckillExecution>(true,execution);
         }catch (SeckillCloseException e){
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.END);
-            return new SeckillResult<SeckillExecution>(false,execution);
+            return new SeckillResult<SeckillExecution>(true,execution);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.INNER_ERROR);
-            return new SeckillResult<SeckillExecution>(false,execution);
+            return new SeckillResult<SeckillExecution>(true,execution);
         }
     }
-    @RequestMapping(value = "time/now",method = RequestMethod.GET)
+    @RequestMapping(value = "/time/now",method = RequestMethod.GET)
+    @ResponseBody
     public SeckillResult<Long> time(){
         Date now = new Date();
         return new SeckillResult<Long>(true,now.getTime());
+    }
+
+    @RequestMapping(value = "/{pageIdx}/list",method = RequestMethod.GET)
+    public String listByPage(@PathVariable("pageIdx") int pageIdx,Model model){
+        int pageNumber = seckillService.getSeckillPageNumber(pageIdx);
+        model.addAttribute("pageNumber",pageNumber);
+        List<Seckill> list = seckillService.getSeckillListByPage(pageNumber);
+        model.addAttribute("list",list);
+
+        return "list";
     }
 }
