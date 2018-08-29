@@ -43,10 +43,10 @@
     <div>
         <ul class="pager">
             <li class="previous">
-                <a href="/seckill/${pageNumber-1}/list">Previous</a>
+                <a href="/seckill/${nowIdx - 1}/list">上一页</a>
             </li>
             <li class="next">
-                <a href="/seckill/${pageNumber+1}/list">Next</a>
+                <a href="/seckill/${nowIdx + 1}/list">下一页</a>
             </li>
         </ul>
     </div>

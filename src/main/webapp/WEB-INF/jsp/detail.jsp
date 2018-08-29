@@ -33,7 +33,7 @@
                     <div class="row">
                         <div class="col-xs-8 col-xs-offset-2">
                             <input type="text" name="killPhone" id="killPhoneKey"
-                                   placeholder="填写手机号^o^" class="form-control"/>
+                                   placeholder="填写手机号" class="form-control"/>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                     <span id="killPhoneMessage" class="glyphicon"></span>
                     <button type="button" id="killPhoneBtn" class="btn btn-success">
                         <span class="glyphicon glyphicon-phone"></span>
-                        Submit
+                        提交
                     </button>
                 </div>
             </div>

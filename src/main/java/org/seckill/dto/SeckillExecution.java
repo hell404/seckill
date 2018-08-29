@@ -15,16 +15,16 @@ public class SeckillExecution  {
     private String stateInfo;
     //秒杀成功对象
     private SuccessKilled successKilled;
-    //成功
 
+    //秒杀成功的构造函数
     public SeckillExecution(long seckillId, SeckillStatEnum statEnum, SuccessKilled successKilled) {
         this.seckillId = seckillId;
         this.state = statEnum.getState();
         this.stateInfo = statEnum.getStateInfo();
         this.successKilled = successKilled;
     }
-    //失败
 
+    //秒杀失败的构造函数
     public SeckillExecution(long seckillId, SeckillStatEnum statEnum) {
         this.seckillId = seckillId;
         this.state = statEnum.getState();

@@ -31,7 +31,7 @@ public class SeckillController {
         //获取列表页
         List<Seckill> list = seckillService.getSeckillList();
         model.addAttribute("list",list);
-        model.addAttribute("pageNumber",0);
+        model.addAttribute("nowIdx",0);
         return "list";
     }
 
@@ -72,9 +72,9 @@ public class SeckillController {
         if(phone == null){
             return new SeckillResult<SeckillExecution>(false,"未注册");
         }
-        SeckillResult<SeckillExecution> result;
         try {
-            SeckillExecution execution = seckillService.executeSeckill(seckillId,phone,md5);
+            //通过存储过程去调用
+            SeckillExecution execution = seckillService.executeSeckillProcedure(seckillId,phone,md5);
              return new SeckillResult<SeckillExecution>(true,execution);
         }catch (RepeatKillException e){
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.REPEAT_KILL);
@@ -97,11 +97,10 @@ public class SeckillController {
 
     @RequestMapping(value = "/{pageIdx}/list",method = RequestMethod.GET)
     public String listByPage(@PathVariable("pageIdx") int pageIdx,Model model){
-        int pageNumber = seckillService.getSeckillPageNumber(pageIdx);
-        model.addAttribute("pageNumber",pageNumber);
-        List<Seckill> list = seckillService.getSeckillListByPage(pageNumber);
+        int nowIdx = seckillService.getSeckillPageIdx(pageIdx);
+        model.addAttribute("nowIdx",nowIdx);
+        List<Seckill> list = seckillService.getSeckillListByPage(nowIdx);
         model.addAttribute("list",list);
-
         return "list";
     }
 }

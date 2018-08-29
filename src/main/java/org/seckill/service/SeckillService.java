@@ -31,9 +31,21 @@ public interface SeckillService {
      * @param md5
      */
     SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
-            throws SeckillException,SeckillCloseException,RepeatKillException;
+            throws SeckillCloseException,RepeatKillException,SeckillException;
+
+    /**
+     * 使用存储过程执行秒杀操作
+     * @param seckillId
+     * @param userPhone
+     * @param md5
+     * @return
+     * @throws SeckillCloseException
+     * @throws RepeatKillException
+     * @throws SeckillException
+     */
+    SeckillExecution executeSeckillProcedure(long seckillId, long userPhone, String md5);
 
     List<Seckill> getSeckillListByPage(int pageIdx);
 
-    int getSeckillPageNumber(int pageNumber);
+    int getSeckillPageIdx(int pageIdx);
 }

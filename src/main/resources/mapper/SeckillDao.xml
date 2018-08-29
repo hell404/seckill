@@ -4,14 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.seckill.dao.SeckillDao">
     <!--目的：为dao接口方法提供sql语句配置-->
-
     <update id="reduceNumber">
-        <!--具体的sql语句-->
-        <!--<![CDATA[<=]]>表示把<=进行一个转义-->
+        <!--使用<![CDATA[ ]]>表示把方括号中的内容进行转义-->
         UPDATE
           seckill
         SET
-          number = number-1
+          number = number - 1
         WHERE
           seckill_id = #{seckillId}
           and start_time <![CDATA[<=]]> #{killTime}
@@ -39,8 +37,18 @@
         limit #{offset},#{limit}
     </select>
 
-    <select id="queryCount" resultType="integer">
+    <select id="queryCount" resultType="int">
         SELECT COUNT(seckill_id)
         FROM seckill
+    </select>
+
+    <!-- 使用mybatis调用存储过程 -->
+    <select id="killByProcedure" statementType="CALLABLE">
+        call execute_seckill(
+          #{seckillId,jdbcType = BIGINT,mode = IN},
+          #{phone,jdbcType = BIGINT,mode = IN},
+          #{killTime,jdbcType = TIMESTAMP,mode = IN},
+          #{result,jdbcType = INTEGER,mode = OUT}
+        )
     </select>
 </mapper>

@@ -6,7 +6,7 @@ package org.seckill.dto;
 public class Exposer {
     //是否开启秒杀
     private boolean exposed;
-    // 一种加密措施
+    //加密措施
     private String md5;
     //商品id
     private long seckillId;
@@ -17,12 +17,13 @@ public class Exposer {
     //秒杀结束时间
     private long end;
 
+    //开启秒杀的构造函数
     public Exposer(boolean exposed, String md5, long seckillId) {
         this.exposed = exposed;
         this.md5 = md5;
         this.seckillId = seckillId;
     }
-
+    //未开启秒杀的构造函数
     public Exposer(boolean exposed, long seckillId, long now, long start, long end) {
         this.exposed = exposed;
         this.seckillId = seckillId;
@@ -30,7 +31,7 @@ public class Exposer {
         this.start = start;
         this.end = end;
     }
-
+    //未找到秒杀商品的构造函数
     public Exposer(boolean exposed, long seckillId) {
         this.exposed = exposed;
         this.seckillId = seckillId;
