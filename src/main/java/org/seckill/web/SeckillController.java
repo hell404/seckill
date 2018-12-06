@@ -1,6 +1,6 @@
 package org.seckill.web;
 
-import org.seckill.dao.SeckillDao;
+import com.sun.deploy.net.HttpResponse;
 import org.seckill.dto.Exposer;
 import org.seckill.dto.SeckillExecution;
 import org.seckill.dto.SeckillResult;
@@ -8,33 +8,48 @@ import org.seckill.entity.Seckill;
 import org.seckill.enums.SeckillStatEnum;
 import org.seckill.exception.RepeatKillException;
 import org.seckill.exception.SeckillCloseException;
+import org.seckill.service.ProductSeckillService;
 import org.seckill.service.SeckillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/seckill")
 public class SeckillController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
+    @Resource
     private SeckillService seckillService;
+    @Resource
+    private ProductSeckillService productSeckillService;
 
+    /**
+     * 获取秒杀商品列表页
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public String list(Model model){
-        //获取列表页
         List<Seckill> list = seckillService.getSeckillList();
         model.addAttribute("list",list);
-        model.addAttribute("nowIdx",0);
         return "list";
     }
 
+    /**
+     * 获取秒杀商品详情页
+     * @param seckillId
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/{seckillId}/detail",method = RequestMethod.GET)
     public String detail(@PathVariable("seckillId") Long seckillId, Model model){
         if(seckillId == null){
@@ -48,6 +63,11 @@ public class SeckillController {
         return "detail";
     }
 
+    /**
+     * 暴露秒杀地址
+     * @param seckillId 商品编号
+     * @return
+     */
     @RequestMapping(value = "/{seckillId}/exposer",method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
     @ResponseBody
@@ -63,6 +83,13 @@ public class SeckillController {
         return result;
     }
 
+    /**
+     * 执行秒杀
+     * @param seckillId 秒杀商品id
+     * @param md5 密钥
+     * @param phone 手机号
+     * @return
+     */
     @RequestMapping(value = "/{seckillId}/{md5}/execution",method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
     @ResponseBody
@@ -73,34 +100,53 @@ public class SeckillController {
             return new SeckillResult<SeckillExecution>(false,"未注册");
         }
         try {
-            //通过存储过程去调用
-            SeckillExecution execution = seckillService.executeSeckillProcedure(seckillId,phone,md5);
-             return new SeckillResult<SeckillExecution>(true,execution);
+            //存储过程调用
+//            SeckillExecution execution = seckillService.executeSeckillProcedure(seckillId,phone,md5);
+            //事务调用
+            SeckillExecution execution = seckillService.executeSeckill(seckillId, phone, md5);
+            return new SeckillResult<>(true,execution);
         }catch (RepeatKillException e){
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.REPEAT_KILL);
-            return new SeckillResult<SeckillExecution>(true,execution);
+            return new SeckillResult<>(true,execution);
         }catch (SeckillCloseException e){
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.END);
-            return new SeckillResult<SeckillExecution>(true,execution);
+            return new SeckillResult<>(true,execution);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             SeckillExecution execution = new SeckillExecution(seckillId, SeckillStatEnum.INNER_ERROR);
-            return new SeckillResult<SeckillExecution>(true,execution);
+            return new SeckillResult<>(true,execution);
         }
     }
+
+    /**
+     * 获取系统当前时间
+     * @return
+     */
     @RequestMapping(value = "/time/now",method = RequestMethod.GET)
     @ResponseBody
     public SeckillResult<Long> time(){
         Date now = new Date();
-        return new SeckillResult<Long>(true,now.getTime());
+        return new SeckillResult<>(true,now.getTime());
     }
 
-    @RequestMapping(value = "/{pageIdx}/list",method = RequestMethod.GET)
-    public String listByPage(@PathVariable("pageIdx") int pageIdx,Model model){
-        int nowIdx = seckillService.getSeckillPageIdx(pageIdx);
-        model.addAttribute("nowIdx",nowIdx);
-        List<Seckill> list = seckillService.getSeckillListByPage(nowIdx);
-        model.addAttribute("list",list);
-        return "list";
+
+    /**
+     * redis锁 通过ab压测检测
+     * @param seckillId
+     * @return
+     * @throws Exception
+     */
+    //consumes指客户端的contentType, produces指服务端contentType
+    @RequestMapping(value = "/query/{seckillId}", produces = "application/json;charset=utf8")
+    @ResponseBody
+    public String query(@PathVariable("seckillId") String seckillId) throws Exception{
+        return productSeckillService.query(seckillId);
+    }
+
+    @RequestMapping(value = "/order/{seckillId}", produces = "application/json;charset=utf8")
+    @ResponseBody
+    public String order(@PathVariable("seckillId") String seckillId) throws Exception{
+        productSeckillService.order(seckillId);
+        return productSeckillService.query(seckillId);
     }
 }

@@ -7,9 +7,8 @@
     <!--配置springMVC-->
     <!--开启spingMVC注解模式-->
     <mvc:annotation-driven/>
-
+    <!-- 对于静态资源请求的处理, 静态资源路径映射 -->
     <mvc:default-servlet-handler/>
-
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>

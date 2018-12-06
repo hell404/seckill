@@ -15,25 +15,24 @@ var seckill={
     //处理秒杀逻辑
     handlerSeckill:function (seckillId,node) {
         //获取秒杀地址，控制显示逻辑，执行秒杀
-        node.hide().
-            html('<button class="btn btn-primary btn-lg" id="killBtn">开始秒杀</button>');//按钮
-        $.post(seckill.URL.exposer(seckillId),{},function (result) {
+        node.hide().html('<button class="btn btn-primary btn-lg" id="killBtn">开始秒杀</button>');//按钮
+        $.post(seckill.URL.exposer(seckillId),{},function (result) {//暴露秒杀地址
             //在回调函数中执行交互流程
             if(result && result['success']){
                 var exposer = result['data'];
                 if(exposer['exposed']){//是否开启秒杀
                     //获取秒杀地址
                     var md5 = exposer['md5'];
-                    var killUrl = seckill.URL.execution(seckillId,md5);
+                    var killUrl = seckill.URL.execution(seckillId, md5);
                     console.log("killUrl:"+killUrl);
                     //绑定一次点击事件，防止用户多次点击
                     $('#killBtn').one('click',function () {
                         //执行秒杀请求,在哪里运行，this就表示这个对象，即this = #killBtn
                         //禁用按钮
                         $(this).addClass('disabled');
-                        //发送秒杀请求
-                        $.post(killUrl,{},function (result) {
-                            if(result && result['success']){
+                        //执行秒杀
+                        $.post(killUrl,{},function(result){
+                            if(result && result['success']){ //显示秒杀结果
                                 var killResult = result['data'];
                                 var state = killResult['state'];
                                 var stateInfo = killResult['stateInfo'];
@@ -42,7 +41,7 @@ var seckill={
                             }
                         });
                     });
-                    node.show();
+                    node.show();//显示
                 }else{//未开启秒杀
                     var now = exposer['now'];
                     var start = exposer['start'];
@@ -119,6 +118,7 @@ var seckill={
             var startTime = params['startTime'];
             var endTime = params['endTime'];
             var seckillId = params['seckillId'];
+            //获取系统时间
             $.get(seckill.URL.now(),{},function (result) {
                 if(result && result['success']){
                     var nowTime = result['data'];

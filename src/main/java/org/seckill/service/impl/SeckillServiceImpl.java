@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.naming.ldap.PagedResultsControl;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,11 +31,11 @@ import java.util.Map;
 public class SeckillServiceImpl implements SeckillService {
     //日志打印对象
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
+    @Resource
     private SeckillDao seckillDao;
-    @Autowired
+    @Resource
     private SuccessKilledDao successKilledDao;
-    @Autowired
+    @Resource
     private RedisDao redisDao;
     //盐值，用于混淆md5加密后的字符串
     private final String slat = "ajsdkjk123801jlskJSLDJAJasdjk2jkdsj";
@@ -77,8 +78,7 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
-    //添加声明式事务注解，若try{}中有运行时异常抛出，则进行事务回滚
-    @Transactional
+    @Transactional//事务注解，若有运行时异常抛出，事务回滚(spring声明式事务只会对运行时异常进行回滚)
     public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
             throws SeckillException,SeckillCloseException,RepeatKillException{
         if(md5 == null || !md5.equals(getMD5(seckillId))){
@@ -88,17 +88,17 @@ public class SeckillServiceImpl implements SeckillService {
         Date nowTime = new Date();
         try {
             //插入购买明细
-            int insertCount = successKilledDao.insertSuccessKilled(seckillId,userPhone);
+            int insertCount = successKilledDao.insertSuccessKilled(seckillId, userPhone);
             if(insertCount <= 0){//重复秒杀
                 throw new RepeatKillException("seckill repeat");
             }else{
                 //减库存
-                int updateCount = seckillDao.reduceNumber(seckillId,nowTime);
+                int updateCount = seckillDao.reduceNumber(seckillId, nowTime);
                 if(updateCount <= 0){//减库存失败：数量不够，超时
                     throw new SeckillCloseException("seckill is closed");
                 }else{//秒杀商品成功
-                    SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId,userPhone);
-                    return new SeckillExecution(seckillId, SeckillStatEnum.SUCCESS,successKilled);
+                    SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
+                    return new SeckillExecution(seckillId, SeckillStatEnum.SUCCESS, successKilled);
                 }
             }
         }catch (SeckillCloseException e1){
@@ -108,9 +108,6 @@ public class SeckillServiceImpl implements SeckillService {
         }catch (Exception e){
             //打印日志
             logger.error(e.getMessage(),e);
-            //将编译时异常转换为运行时异常
-            //spring声明式事务只会对运行时异常进行事务回滚，编译时异常不会回滚
-            //将减库存，插入购买明细记录在同一try块中，封装成一个事务
             throw new SeckillException("seckill inner error:" + e.getMessage());
         }
     }
@@ -122,6 +119,7 @@ public class SeckillServiceImpl implements SeckillService {
         }
         //获取当前系统时间
         Date killTime = new Date();
+        //将数据封装成map对象带入存储过程进行处理
         Map<String,Object> map = new HashMap<>();
         map.put("seckillId",seckillId);
         map.put("phone",userPhone);
@@ -141,30 +139,6 @@ public class SeckillServiceImpl implements SeckillService {
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return new SeckillExecution(seckillId,SeckillStatEnum.INNER_ERROR);
-        }
-    }
-
-    @Override
-    public List<Seckill> getSeckillListByPage(int pageIdx) {
-        return seckillDao.queryByPage(pageIdx * 4,4);
-    }
-
-    @Override
-    public int getSeckillPageIdx(int pageIdx) {
-        int pageSize = 0;
-        int pageCount = seckillDao.queryCount();
-        int isAliquot = pageCount % 4;//是否可以被4整除
-        if(isAliquot == 0){
-            pageSize = pageCount/4 - 1;
-        }else{
-            pageSize = pageCount/4;
-        }
-        if(pageIdx <= 0){
-            return 0;
-        }else if (pageIdx >= pageSize){
-            return pageSize;
-        }else{
-            return pageIdx;
         }
     }
 }

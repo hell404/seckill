@@ -33,22 +33,12 @@
                         <td><fmt:formatDate value="${sk.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <td><fmt:formatDate value="${sk.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                         <td><fmt:formatDate value="${sk.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                        <td><a class="btn btn-info" href="/seckill/${sk.seckillId}/detail" target="_blank">link</a> </td>
+                        <td><a class="btn btn-primary" href="/seckill/${sk.seckillId}/detail" target="_blank">查看</a> </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
         </div>
-    </div>
-    <div>
-        <ul class="pager">
-            <li class="previous">
-                <a href="/seckill/${nowIdx - 1}/list">上一页</a>
-            </li>
-            <li class="next">
-                <a href="/seckill/${nowIdx + 1}/list">下一页</a>
-            </li>
-        </ul>
     </div>
 </div>
 </body>

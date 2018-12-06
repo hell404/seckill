@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.seckill.dao.SeckillDao">
-    <!--目的：为dao接口方法提供sql语句配置-->
+
     <update id="reduceNumber">
-        <!--使用<![CDATA[ ]]>表示把方括号中的内容进行转义-->
+        <!-- <![CDATA[ ]]>将方括号中的内容进行转义 -->
         UPDATE
           seckill
         SET
@@ -28,18 +28,6 @@
         FROM seckill
         ORDER BY create_time DESC
         limit #{offset},#{limit}
-    </select>
-
-    <select id="queryByPage" resultType="Seckill">
-        SELECT seckill_id,name,number,start_time,end_time,create_time
-        FROM seckill
-        ORDER BY create_time DESC
-        limit #{offset},#{limit}
-    </select>
-
-    <select id="queryCount" resultType="int">
-        SELECT COUNT(seckill_id)
-        FROM seckill
     </select>
 
     <!-- 使用mybatis调用存储过程 -->

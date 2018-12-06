@@ -1,6 +1,9 @@
 package org.seckill.dto;
 
+import lombok.Data;
+
 //封装json结果
+@Data
 public class SeckillResult<T> {
     //请求状态
     private boolean success;
@@ -18,29 +21,5 @@ public class SeckillResult<T> {
     public SeckillResult(boolean success, T data) {
         this.success = success;
         this.data = data;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 }

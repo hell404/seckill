@@ -11,41 +11,24 @@ import java.util.List;
 
 public interface SeckillService {
     /**
-     * 查询所有的秒杀记录
+     * 查询所有的秒杀商品
      */
     List<Seckill> getSeckillList();
     /**
-     * 通过id查询单个秒杀记录
+     * 通过id查询单个秒杀商品
      */
     Seckill getById(long seckillId);
     /**
-     * 秒杀开启时输出秒杀接口地址
-     * 否则输出秒杀开始时间-结束时间
+     * 暴露秒杀接口地址
      */
     Exposer exportSeckillUrl(long seckillId);
-
     /**
-     * 执行秒杀操作
-     * @param seckillId
-     * @param userPhone
-     * @param md5
+     * 执行秒杀
      */
     SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
             throws SeckillCloseException,RepeatKillException,SeckillException;
-
     /**
      * 使用存储过程执行秒杀操作
-     * @param seckillId
-     * @param userPhone
-     * @param md5
-     * @return
-     * @throws SeckillCloseException
-     * @throws RepeatKillException
-     * @throws SeckillException
      */
     SeckillExecution executeSeckillProcedure(long seckillId, long userPhone, String md5);
-
-    List<Seckill> getSeckillListByPage(int pageIdx);
-
-    int getSeckillPageIdx(int pageIdx);
 }
