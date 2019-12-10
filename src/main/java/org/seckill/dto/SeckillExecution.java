@@ -8,7 +8,7 @@ import org.seckill.enums.SeckillStatEnum;
  * 封装秒杀执行后的结果
  */
 @Data
-public class SeckillExecution  {
+public class SeckillExecution {
     //秒杀商品id
     private long seckillId;
     //秒杀结果状态

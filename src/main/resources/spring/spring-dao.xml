@@ -4,17 +4,13 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    <!--配置整合mybatis的过程-->
-    <!--配置数据库相关参数 properties的属性：${url}-->
     <context:property-placeholder location="classpath:jdbc.properties"/>
     <!--配置数据库的连接池-->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <!--配置连接池属性-->
-        <property name="driverClass" value="${driver}"/>
-        <property name="jdbcUrl" value="${url}"/>
-        <property name="user" value="${user}"/>
-        <property name="password" value="${password}"/>
-
+        <property name="driverClass" value="${c3p0.driverClass}"/>
+        <property name="jdbcUrl" value="${c3p0.jdbcUrl}"/>
+        <property name="user" value="${c3p0.user}"/>
         <!--c3p0连接池的私有属性-->
         <!--连接池的最大连接数-->
         <property name="maxPoolSize" value="30"/>
@@ -47,7 +43,7 @@
         <!--给出扫描dao接口的包-->
         <property name="basePackage" value="org.seckill.dao"/>
     </bean>
-    <!-- 自动注入RedisDao -->
+    <!-- 注入RedisDao -->
     <bean id="redisDao" class="org.seckill.dao.cache.RedisDao">
         <!-- 使用构造器注入 -->
         <constructor-arg index="0" value="localhost"/>

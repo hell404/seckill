@@ -17,6 +17,7 @@ public class SeckillResult<T> {
         this.success = success;
         this.error = error;
     }
+
     //请求成功的构造函数
     public SeckillResult(boolean success, T data) {
         this.success = success;
